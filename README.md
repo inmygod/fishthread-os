@@ -85,3 +85,13 @@ Theme, language and system preferences.
 Planning & Architecture Phase
 
 Build Authority Document Version: 1.0
+Authority Documents
+
+The following documents are the authoritative source of truth for FishThread OS:
+	•	docs/SPEC-1-Build-Authority.md
+	•	docs/SPEC-2-Technical-Authority.md
+	•	docs/SPEC-3-UI-Authority.md
+	•	docs/SPEC-4-Implementation-Authority.md
+	•	docs/SPEC-5-Project-Bootstrap-Authority.md
+
+All future development must comply with these specifications.
