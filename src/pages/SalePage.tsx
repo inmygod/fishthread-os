@@ -1,3 +1,3 @@
 export default function SalePage() {
-  return <h2>Sale</h2>;
+  return <h1>বিক্রয়</h1>;
 }
