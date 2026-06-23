@@ -1,3 +1,3 @@
 export default function SettingsPage() {
-  return <h2>Settings</h2>;
+  return <h1>সেটিংস</h1>;
 }
