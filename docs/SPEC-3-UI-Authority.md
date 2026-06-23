@@ -319,6 +319,8 @@ Minimum touch target:
 Primary actions must remain reachable with one hand.
 
 No page may require horizontal scrolling.
+
+
 Mobile Numeric Input Authority
 
 FishThread OS is designed for fast mobile-first business operations.
