@@ -1,9 +1,11 @@
 import DashboardPage from "./pages/DashboardPage";
+import BottomNavigation from "./components/BottomNavigation";
 
 export default function App() {
   return (
-    <div style={{ padding: "16px" }}>
+    <>
       <DashboardPage />
-    </div>
+      <BottomNavigation />
+    </>
   );
 }
