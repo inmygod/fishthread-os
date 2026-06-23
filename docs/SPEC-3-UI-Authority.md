@@ -319,3 +319,68 @@ Minimum touch target:
 Primary actions must remain reachable with one hand.
 
 No page may require horizontal scrolling.
+Mobile Numeric Input Authority
+
+FishThread OS is designed for fast mobile-first business operations.
+
+All business-critical numeric fields must use a mobile numeric keypad optimized for one-handed operation.
+
+Applicable Fields
+	•	Weight (Kg)
+	•	Purchase Rate
+	•	Sale Rate
+	•	Purchase Total
+	•	Sale Total
+	•	Payment Amount
+	•	Advance Amount
+	•	Due Amount
+	•	Quantity
+	•	Any other numeric business field
+
+Input Requirements
+	•	Mobile keyboard must open as a numeric keypad.
+	•	Decimal values must be supported.
+	•	Alphabetic characters must be rejected.
+	•	Multiple decimal points must be rejected.
+	•	Empty values may be allowed where business rules permit.
+
+Supported Examples
+
+0.3
+1
+1.25
+15.750
+250
+250.50
+
+Unsupported Examples
+
+abc
+12kg
+100tk
+1..5
+
+Technical Standard
+
+React Inputs:
+
+inputMode=“decimal”
+
+Phone Number Inputs:
+
+type=“tel”
+inputMode=“numeric”
+
+Weight Precision
+
+Weight values must support up to 3 decimal places.
+
+Examples:
+
+0.300 Kg
+1.250 Kg
+15.750 Kg
+
+Authority
+
+This rule is mandatory across the entire application and may not be overridden by future implementations.
