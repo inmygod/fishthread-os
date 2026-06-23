@@ -1,3 +1,3 @@
 export default function InvoicesPage() {
-  return <h2>Invoices</h2>;
+  return <h1>চালানসমূহ</h1>;
 }
