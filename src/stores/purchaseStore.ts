@@ -20,6 +20,11 @@ interface PurchaseStore {
   deletePurchase: (
     id: string
   ) => void;
+
+  markAsSold: (
+    purchaseIds: string[],
+    saleInvoiceId: string
+  ) => void;
 }
 
 export const usePurchaseStore =
@@ -71,6 +76,27 @@ export const usePurchaseStore =
               ? {
                   ...purchase,
                   deleted: true,
+                }
+              : purchase
+          ),
+      })),
+
+    markAsSold: (
+      purchaseIds,
+      saleInvoiceId
+    ) =>
+      set((state) => ({
+        purchases:
+          state.purchases.map((purchase) =>
+            purchaseIds.includes(
+              purchase.id
+            )
+              ? {
+                  ...purchase,
+                  status: "sold",
+                  soldAt:
+                    new Date().toISOString(),
+                  saleInvoiceId,
                 }
               : purchase
           ),
