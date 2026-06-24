@@ -15,6 +15,8 @@ export interface PurchaseInvoice {
 
   totalAmount: number;
 
+  lotIds: string[];
+
   status:
     | "available"
     | "sold"
