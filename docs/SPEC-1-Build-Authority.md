@@ -1,6 +1,6 @@
 SPEC-1 — FishThread OS Build Authority
 
-Background
+# Background
 
 FishThread OS একটি Offline-First Fish Trading Operating System।
 
@@ -8,17 +8,25 @@ FishThread OS একটি Offline-First Fish Trading Operating System।
 
 সিস্টেমটি iPhone 8 স্ক্রিনকে বেসলাইন ধরে Mobile-First UI-তে তৈরি হবে।
 
-Core Principles
+# Core Principles
 
-Principle 1
+## Principle 1
 
 সিস্টেমের প্রধান ব্যবসায়িক ইউনিট:
 
-Invoice (চালান)
+- Purchase Invoice
+- Purchase Lot
+- Sale Invoice
 
-Lot বা দাগ আলাদা Inventory Entity নয়।
+Purchase Invoice একটি Container।
 
-Principle 2
+Purchase Lot (দাগ) হলো Inventory-এর মূল Unit।
+
+Inventory Tracking, Availability, Sold Status এবং Sale Linking সবকিছু Purchase Lot ভিত্তিক হবে।
+
+একটি Purchase Invoice-এর মধ্যে এক বা একাধিক Purchase Lot থাকতে পারবে।
+
+## Principle 2
 
 সিস্টেম:
 
@@ -28,19 +36,19 @@ Offline First
 
 Internet সংযোগ ছাড়াই পূর্ণ কার্যকর থাকতে হবে।
 
-Principle 3
+## Principle 3
 
 কোনো Screen-এ Horizontal Scroll থাকবে না।
 
 Up / Down Scroll Only
 
-Principle 4
+## Principle 4
 
 Primary Currency:
 
 ৳ (Bangladeshi Taka)
 
-Principle 5
+## Principle 5
 
 Dark Mode / Light Mode:
 
@@ -48,21 +56,21 @@ System Follow
 
 Default।
 
-Main Navigation
+# Main Navigation
 
 Bottom Navigation:
 
-Dashboard
-Purchase
-Sale
-Invoices
-Customers
-Reports
-Settings
+- Dashboard
+- Purchase
+- Sale
+- Invoices
+- Customers
+- Reports
+- Settings
 
-Purchase Module
+# Purchase Module
 
-Create Purchase Invoice
+## Create Purchase Invoice
 
 Button:
 
@@ -70,23 +78,25 @@ Button:
 
 চাপলে নতুন Purchase Invoice তৈরি হবে।
 
-Invoice Number
+## Invoice Number
 
 Auto Generated:
 
 PUR-2026-000001
+
 PUR-2026-000002
 
-Creation Time
+## Creation Time
 
 Invoice Creation DateTime:
 
 Auto Generated
+
 Immutable
 
 Edit করলে পরিবর্তন হবে না।
 
-Supplier
+## Supplier
 
 Supplier না দিলে:
 
@@ -94,38 +104,38 @@ Supplier না দিলে:
 
 Auto Create / Auto Select হবে।
 
-Purchase Rows
+## Purchase Lots
 
-একটি চালানে একাধিক Row থাকবে।
+একটি চালানে একাধিক Lot (দাগ) থাকবে।
 
-Add Row Button:
+Button:
 
 + দাগ যোগ করুন
 
-Row Fields
+## Lot Fields
 
-প্রতিটি Row:
+প্রতিটি Lot:
 
-মাছের ধরন
-পরিশোধিত মূল্য
-দর
-ওজন
-মোট দাম
+- মাছের ধরন
+- পরিশোধিত মূল্য
+- দর
+- ওজন
+- মোট দাম
 
-Fish Type
+## Fish Type
 
 Dropdown:
 
-গলদা
-বাগদা
-সাদা
-অন্যান্য
+- গলদা
+- বাগদা
+- সাদা
+- অন্যান্য
 
 Default:
 
 গলদা
 
-Required Fields
+## Required Fields
 
 শুধুমাত্র:
 
@@ -133,14 +143,14 @@ Required Fields
 
 Required।
 
-Optional Fields
+## Optional Fields
 
-দর
-ওজন
+- দর
+- ওজন
 
 Optional।
 
-Row Total
+## Lot Total
 
 যদি:
 
@@ -150,43 +160,45 @@ Row Total
 
 নাহলে Manual Value গ্রহণ করবে।
 
-Invoice Total
+## Invoice Total
 
-সব Row-এর পরিশোধিত মূল্য
+সব Lot-এর পরিশোধিত মূল্য
 
 এর যোগফল।
 
-Edit Rule
+## Edit Rule
 
 Invoice Edit Allowed:
 
 Creation Date
+
 ↓
+
 11:59 PM
 
 পর্যন্ত।
 
 তারপর Locked।
 
-Sale Module
+# Sale Module
 
-Create Sale Invoice
+## Create Sale Invoice
 
 Button:
 
 বেচুন
 
-Source Selection
+## Source Selection
 
 এক বা একাধিক:
 
-Available Purchase Invoice
+Available Purchase Lots
 
 Select করা যাবে।
 
-Restriction
+## Restriction
 
-একবার Sell হলে:
+একবার Lot Sell হলে:
 
 Sold
 
@@ -194,21 +206,21 @@ Status হবে।
 
 পুনরায় Select করা যাবে না।
 
-Customer
+## Customer
 
 Top Field:
 
 গ্রাহক
 
-Customer Selection
+## Customer Selection
 
 Options:
 
-Saved Customer
-সাধারণ ক্রেতা
-নতুন গ্রাহক যোগ করুন
+- Saved Customer
+- সাধারণ ক্রেতা
+- নতুন গ্রাহক যোগ করুন
 
-Inline Customer Creation
+## Inline Customer Creation
 
 নতুন গ্রাহক যোগ করুন চাপলে:
 
@@ -218,55 +230,65 @@ Open হবে।
 
 Page Change হবে না।
 
-Sale Rows
+## Sale Rows
 
 Fields:
 
-মাছের ধরন
-গ্রাহক
-প্রাপ্য মূল্য
-দর
-ওজন
-মোট দাম
+- মাছের ধরন
+- গ্রাহক
+- প্রাপ্য মূল্য
+- দর
+- ওজন
+- মোট দাম
 
-Required Field
+## Required Field
 
 প্রাপ্য মূল্য
 
 Only Required।
 
-Invoice Due Calculation
+## Invoice Due Calculation
 
 সব Row-এর প্রাপ্য মূল্য
+
 =
+
 মোট প্রাপ্য
 
-Previous Balance
+## Previous Balance
 
 Display:
 
 পূর্বের বকেয়া
+
 বা
+
 পূর্বের অগ্রিম
 
-Grand Total
+## Grand Total
 
 মোট প্রাপ্য
+
 +
+
 পূর্বের বকেয়া
+
 -
+
 পূর্বের অগ্রিম
 
-Cash Received
+## Cash Received
 
 Field:
 
 নগদ প্রাপ্ত
 
-Final Balance
+## Final Balance
 
 সর্বমোট প্রাপ্য
+
 -
+
 নগদ প্রাপ্ত
 
 ধনাত্মক:
@@ -277,21 +299,21 @@ Final Balance
 
 অগ্রিম
 
-Invoice Module
+# Invoice Module
 
 Sections:
 
-ক্রয় চালান
-বিক্রয় চালান
+- ক্রয় চালান
+- বিক্রয় চালান
 
-Statuses
+Statuses:
 
-Available
-Sold
-Archived
-Deleted
+- Available
+- Sold
+- Archived
+- Deleted
 
-Delete
+## Delete
 
 Delete করলে:
 
@@ -299,9 +321,9 @@ Recycle Bin
 
 এ যাবে।
 
-Customers Module
+# Customers Module
 
-Required Field
+## Required Field
 
 শুধু:
 
@@ -309,35 +331,37 @@ Required Field
 
 Required।
 
-Optional Fields
+## Optional Fields
 
-ছবি
-মোবাইল
-ঠিকানা
-ব্যবসার ধরন
-মন্তব্য
+- ছবি
+- মোবাইল
+- ঠিকানা
+- ব্যবসার ধরন
+- মন্তব্য
 
-Default Customers
+## Default Customers
 
 Auto Created:
 
-সাধারণ ক্রেতা
-সাধারণ বিক্রেতা
+- সাধারণ ক্রেতা
+- সাধারণ বিক্রেতা
 
-Delete
+## Delete
 
 Customer Delete:
 
 Recycle Bin
 
-Reports Module
+# Reports Module
 
-Profit / Loss
+## Profit / Loss
 
 Formula:
 
 Total Sale
+
 -
+
 Total Purchase
 
 ধনাত্মক:
@@ -348,33 +372,33 @@ Total Purchase
 
 ক্ষতি
 
-Recycle Bin
+# Recycle Bin
 
 Retention:
 
 15 Days
 
-Restore
+## Restore
 
 Allowed।
 
-Permanent Delete
+## Permanent Delete
 
 Allowed।
 
-Backup & Restore
+# Backup & Restore
 
-Backup
+## Backup
 
 Export:
 
 Single File
 
-Restore
+## Restore
 
 Full Restore Supported।
 
-Calculator
+# Calculator
 
 Floating Button।
 
@@ -382,34 +406,35 @@ Open করলে:
 
 Full Screen
 
-Functions
+## Functions
 
-M+
-M-
-MR
-MC
-Copy Result
+- M+
+- M-
+- MR
+- MC
+- Copy Result
 
 সব কার্যকর হতে হবে।
 
-UI Rules
+# UI Rules
 
-Device Baseline
+## Device Baseline
 
 iPhone 8
+
 375px Width
 
-Scrolling
+## Scrolling
 
 Vertical Only
 
-Touch Target
+## Touch Target
 
 Minimum:
 
 44px
 
-Theme
+## Theme
 
 Default:
 
