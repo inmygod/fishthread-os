@@ -228,3 +228,25 @@ All screens must work within:
 Primary interaction:
 
 Vertical scrolling only.
+
+## Invoice Validation Authority
+
+Purchase Invoice
+
+Required:
+
+- Total Amount
+
+Optional:
+
+- Supplier Name
+- Supplier Phone
+- Weight
+- Rate
+
+Validation Rules:
+
+- Invoice creation must never require Weight.
+- Invoice creation must never require Rate.
+- Invoice creation must never require Supplier.
+- Total Amount is the only mandatory financial field.
