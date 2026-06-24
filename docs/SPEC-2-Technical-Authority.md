@@ -279,3 +279,16 @@ calculated from PurchaseInvoice.
 
 Inventory state SHALL be
 calculated from PurchaseLot.
+
+
+PurchaseLot records SHALL be
+stored independently.
+
+PurchaseLotStore SHALL be the
+source of truth for inventory.
+
+Sale operations SHALL update
+PurchaseLot status.
+
+Inventory availability SHALL be
+determined from PurchaseLot.
