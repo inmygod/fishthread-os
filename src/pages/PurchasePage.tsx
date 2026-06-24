@@ -1,6 +1,15 @@
 import { useMemo, useState } from "react";
 
+import { usePurchaseStore } from "../stores/purchaseStore";
+
+import { PurchaseInvoice } from "../types/PurchaseInvoice";
+
 export default function PurchasePage() {
+  const addPurchase =
+    usePurchaseStore(
+      (state) => state.addPurchase
+    );
+
   const [supplierName, setSupplierName] =
     useState("");
 
@@ -37,11 +46,55 @@ export default function PurchasePage() {
       return;
     }
 
+    const purchase: PurchaseInvoice = {
+      id: crypto.randomUUID(),
+
+      invoiceNumber,
+
+      purchaseDate:
+        new Date().toISOString(),
+
+      supplierName,
+
+      supplierPhone,
+
+      totalWeightKg: weight
+        ? Number(weight)
+        : undefined,
+
+      ratePerKg: rate
+        ? Number(rate)
+        : undefined,
+
+      totalAmount:
+        Number(totalAmount),
+
+      status: "available",
+
+      createdAt:
+        new Date().toISOString(),
+
+      updatedAt:
+        new Date().toISOString(),
+
+      archived: false,
+
+      deleted: false,
+    };
+
+    addPurchase(purchase);
+
     setError("");
 
     alert(
       `চালান সংরক্ষণ করা হয়েছে\n${invoiceNumber}`
     );
+
+    setSupplierName("");
+    setSupplierPhone("");
+    setWeight("");
+    setRate("");
+    setTotalAmount("");
   };
 
   return (
@@ -53,9 +106,7 @@ export default function PurchasePage() {
       <h1>নতুন ক্রয়</h1>
 
       <p>
-        চালান নং:
-        {" "}
-        {invoiceNumber}
+        চালান নং: {invoiceNumber}
       </p>
 
       <div>
