@@ -13,6 +13,8 @@ export interface SaleInvoice {
 
   purchaseInvoiceIds: string[];
 
+  purchaseLotIds: string[];
+
   totalWeightKg?: number;
 
   ratePerKg?: number;
