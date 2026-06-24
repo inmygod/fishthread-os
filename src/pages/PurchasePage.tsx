@@ -8,6 +8,16 @@ export default function PurchasePage() {
     (state) => state.addPurchase
   );
 
+  const archivePurchase =
+    usePurchaseStore(
+      (state) => state.archivePurchase
+    );
+
+  const deletePurchase =
+    usePurchaseStore(
+      (state) => state.deletePurchase
+    );
+
   const purchases = usePurchaseStore(
     (state) => state.purchases
   );
@@ -89,16 +99,19 @@ export default function PurchasePage() {
 
     setError("");
 
-    alert(
-      "চালান সংরক্ষণ করা হয়েছে"
-    );
-
     setSupplierName("");
     setSupplierPhone("");
     setWeight("");
     setRate("");
     setTotalAmount("");
   };
+
+  const visiblePurchases =
+    purchases.filter(
+      (purchase) =>
+        !purchase.archived &&
+        !purchase.deleted
+    );
 
   return (
     <div
@@ -232,36 +245,73 @@ export default function PurchasePage() {
 
       <hr />
 
-      <h3>
-        Saved Purchase Invoices
-      </h3>
+      <h2>
+        ক্রয় চালানসমূহ
+      </h2>
 
-      {purchases.map((purchase) => (
-        <div
-          key={purchase.id}
-          style={{
-            border:
-              "1px solid #ccc",
-            padding: 12,
-            marginTop: 8,
-          }}
-        >
-          <div>
-            {purchase.invoiceNumber}
-          </div>
+      {visiblePurchases.map(
+        (purchase) => (
+          <div
+            key={purchase.id}
+            style={{
+              border:
+                "1px solid #ccc",
+              borderRadius: 8,
+              padding: 12,
+              marginTop: 12,
+            }}
+          >
+            <div>
+              <strong>
+                {
+                  purchase.invoiceNumber
+                }
+              </strong>
+            </div>
 
-          <div>
-            Amount:{" "}
-            {purchase.totalAmount}
-          </div>
+            <div>
+              টাকা:{" "}
+              {
+                purchase.totalAmount
+              }
+            </div>
 
-          <div>
-            Supplier:{" "}
-            {purchase.supplierName ||
-              "N/A"}
+            <div>
+              সরবরাহকারী:{" "}
+              {purchase.supplierName ||
+                "N/A"}
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: 8,
+                marginTop: 8,
+              }}
+            >
+              <button
+                onClick={() =>
+                  archivePurchase(
+                    purchase.id
+                  )
+                }
+              >
+                Archive
+              </button>
+
+              <button
+                onClick={() =>
+                  deletePurchase(
+                    purchase.id
+                  )
+                }
+              >
+                Delete
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      )}
     </div>
   );
 }
