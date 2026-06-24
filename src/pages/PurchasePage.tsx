@@ -163,7 +163,8 @@ export default function PurchasePage() {
                     lot.ratePerKg
                   )
                 : undefined,
-                        status:
+
+            status:
               "available",
 
             createdAt:
@@ -172,11 +173,9 @@ export default function PurchasePage() {
             updatedAt:
               new Date().toISOString(),
 
-            archived:
-              false,
+            archived: false,
 
-            deleted:
-              false,
+            deleted: false,
           };
 
         addLot(
@@ -189,7 +188,7 @@ export default function PurchasePage() {
       }
     );
 
-    const purchase:
+        const purchase:
       PurchaseInvoice = {
       id:
         purchaseId,
@@ -276,6 +275,40 @@ export default function PurchasePage() {
       );
     };
 
+  const getInvoiceStatus =
+    (
+      purchase:
+        PurchaseInvoice
+    ) => {
+      const invoiceLots =
+        getLotsForInvoice(
+          purchase.lotIds
+        );
+
+      const activeLots =
+        invoiceLots.filter(
+          (lot) =>
+            !lot.archived
+        );
+
+      if (
+        activeLots.length === 0
+      ) {
+        return "available";
+      }
+
+      const allSold =
+        activeLots.every(
+          (lot) =>
+            lot.status ===
+            "sold"
+        );
+
+      return allSold
+        ? "sold"
+        : "available";
+    };
+
   return (
     <div
       style={{
@@ -304,12 +337,9 @@ export default function PurchasePage() {
           value={
             supplierName
           }
-          onChange={(
-            e
-          ) =>
+          onChange={(e) =>
             setSupplierName(
-              e.target
-                .value
+              e.target.value
             )
           }
         />
@@ -328,12 +358,9 @@ export default function PurchasePage() {
           value={
             supplierPhone
           }
-          onChange={(
-            e
-          ) =>
+          onChange={(e) =>
             setSupplierPhone(
-              e.target
-                .value
+              e.target.value
             )
           }
         />
@@ -375,9 +402,7 @@ export default function PurchasePage() {
                 </label>
 
                 <input
-                  value={
-                    lot.fishName
-                  }
+                  value={lot.fishName}
                   onChange={(e) =>
                     updateLot(
                       index,
@@ -397,9 +422,7 @@ export default function PurchasePage() {
 
                 <input
                   inputMode="decimal"
-                  value={
-                    lot.weightKg
-                  }
+                  value={lot.weightKg}
                   onChange={(e) =>
                     updateLot(
                       index,
@@ -419,9 +442,7 @@ export default function PurchasePage() {
 
                 <input
                   inputMode="decimal"
-                  value={
-                    lot.ratePerKg
-                  }
+                  value={lot.ratePerKg}
                   onChange={(e) =>
                     updateLot(
                       index,
@@ -440,9 +461,7 @@ export default function PurchasePage() {
                 </label>
 
                 <input
-                  value={
-                    calculatedAmount
-                  }
+                  value={calculatedAmount}
                   readOnly
                 />
               </div>
@@ -456,9 +475,7 @@ export default function PurchasePage() {
 
                 <input
                   inputMode="decimal"
-                  value={
-                    lot.totalAmount
-                  }
+                  value={lot.totalAmount}
                   onChange={(e) =>
                     updateLot(
                       index,
@@ -525,6 +542,11 @@ export default function PurchasePage() {
               purchase.lotIds
             );
 
+          const invoiceStatus =
+            getInvoiceStatus(
+              purchase
+            );
+
           return (
             <div
               key={purchase.id}
@@ -557,6 +579,23 @@ export default function PurchasePage() {
                 {" "}
                 {purchase.supplierName ||
                   "N/A"}
+              </div>
+
+              <div>
+                চালান অবস্থা:
+                {" "}
+
+                <strong
+                  style={{
+                    color:
+                      invoiceStatus ===
+                      "sold"
+                        ? "red"
+                        : "green",
+                  }}
+                >
+                  {invoiceStatus.toUpperCase()}
+                </strong>
               </div>
 
               <div>
@@ -616,9 +655,18 @@ export default function PurchasePage() {
                       <div>
                         অবস্থা:
                         {" "}
-                        {
-                          lot.status
-                        }
+
+                        <strong
+                          style={{
+                            color:
+                              lot.status ===
+                              "sold"
+                                ? "red"
+                                : "green",
+                          }}
+                        >
+                          {lot.status.toUpperCase()}
+                        </strong>
                       </div>
                     </div>
                   )
