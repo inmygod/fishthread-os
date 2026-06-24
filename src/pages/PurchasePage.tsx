@@ -32,6 +32,11 @@ export default function PurchasePage() {
     (state) => state.purchases
   );
 
+  const lotsInStore =
+    usePurchaseLotStore(
+      (state) => state.lots
+    );
+
   const addLot =
     usePurchaseLotStore(
       (state) => state.addLot
@@ -114,95 +119,118 @@ export default function PurchasePage() {
       return;
     }
 
+    const purchaseId =
+      crypto.randomUUID();
+
     const lotIds: string[] = [];
 
-    lots.forEach((lot) => {
-      const lotId =
-        crypto.randomUUID();
+    lots.forEach(
+      (lot, index) => {
+        const lotId =
+          crypto.randomUUID();
 
-      const purchaseLot: PurchaseLot =
-        {
-          id: lotId,
+        const purchaseLot: PurchaseLot =
+          {
+            id: lotId,
 
-          fishName:
-            lot.fishName ||
-            "গলদা",
+            purchaseInvoiceId:
+              purchaseId,
 
-          totalAmount:
-            Number(
-              lot.totalAmount
-            ),
-                    totalWeightKg:
-            lot.weightKg
-              ? Number(
-                  lot.weightKg
-                )
-              : undefined,
+            lotNumber:
+              `LOT-${
+                index + 1
+              }`,
 
-          ratePerKg:
-            lot.ratePerKg
-              ? Number(
-                  lot.ratePerKg
-                )
-              : undefined,
+            fishName:
+              lot.fishName ||
+              "গলদা",
 
-          status:
-            "available",
+            totalAmount:
+              Number(
+                lot.totalAmount
+              ),
 
-          createdAt:
-            new Date().toISOString(),
+            weightKg:
+              lot.weightKg
+                ? Number(
+                    lot.weightKg
+                  )
+                : undefined,
 
-          updatedAt:
-            new Date().toISOString(),
+            ratePerKg:
+              lot.ratePerKg
+                ? Number(
+                    lot.ratePerKg
+                  )
+                : undefined,
+                        status:
+              "available",
 
-          archived: false,
+            createdAt:
+              new Date().toISOString(),
 
-          deleted: false,
-        };
+            updatedAt:
+              new Date().toISOString(),
 
-      addLot(purchaseLot);
+            archived:
+              false,
 
-      lotIds.push(lotId);
-    });
+            deleted:
+              false,
+          };
 
-    const purchase: PurchaseInvoice =
-      {
-        id:
-          crypto.randomUUID(),
+        addLot(
+          purchaseLot
+        );
 
-        invoiceNumber,
+        lotIds.push(
+          lotId
+        );
+      }
+    );
 
-        purchaseDate:
-          new Date().toISOString(),
+    const purchase:
+      PurchaseInvoice = {
+      id:
+        purchaseId,
 
-        supplierName:
-          supplierName ||
-          undefined,
+      invoiceNumber,
 
-        supplierPhone:
-          supplierPhone ||
-          undefined,
+      purchaseDate:
+        new Date().toISOString(),
 
-        totalAmount:
-          invoiceTotal,
+      supplierName:
+        supplierName ||
+        undefined,
 
-        lotIds,
+      supplierPhone:
+        supplierPhone ||
+        undefined,
 
-        status:
-          "available",
+      totalAmount:
+        invoiceTotal,
 
-        createdAt:
-          new Date().toISOString(),
+      lotIds,
 
-        updatedAt:
-          new Date().toISOString(),
+      status:
+        "available",
 
-        archived: false,
+      createdAt:
+        new Date().toISOString(),
 
-        deleted: false,
-      };
+      updatedAt:
+        new Date().toISOString(),
 
-    addPurchase(purchase);
+      archived:
+        false,
+
+      deleted:
+        false,
+    };
+
+    addPurchase(
+      purchase
+    );
 
     setSupplierName("");
 
@@ -210,10 +238,17 @@ export default function PurchasePage() {
 
     setLots([
       {
-        fishName: "গলদা",
-        weightKg: "",
-        ratePerKg: "",
-        totalAmount: "",
+        fishName:
+          "গলদা",
+
+        weightKg:
+          "",
+
+        ratePerKg:
+          "",
+
+        totalAmount:
+          "",
       },
     ]);
 
@@ -227,18 +262,36 @@ export default function PurchasePage() {
         !purchase.deleted
     );
 
+  const getLotsForInvoice =
+    (
+      lotIds:
+        string[]
+    ) => {
+      return lotsInStore.filter(
+        (lot) =>
+          lotIds.includes(
+            lot.id
+          ) &&
+          !lot.deleted
+      );
+    };
+
   return (
     <div
       style={{
         padding: 16,
       }}
     >
-      <h1>নতুন ক্রয়</h1>
+      <h1>
+        নতুন ক্রয়
+      </h1>
 
       <p>
         চালান নং:
         {" "}
-        {invoiceNumber}
+        {
+          invoiceNumber
+        }
       </p>
 
       <div>
@@ -251,9 +304,12 @@ export default function PurchasePage() {
           value={
             supplierName
           }
-          onChange={(e) =>
+          onChange={(
+            e
+          ) =>
             setSupplierName(
-              e.target.value
+              e.target
+                .value
             )
           }
         />
@@ -263,7 +319,8 @@ export default function PurchasePage() {
 
       <div>
         <label>
-          Supplier Phone
+          Supplier
+          Phone
         </label>
 
         <input
@@ -271,9 +328,12 @@ export default function PurchasePage() {
           value={
             supplierPhone
           }
-          onChange={(e) =>
+          onChange={(
+            e
+          ) =>
             setSupplierPhone(
-              e.target.value
+              e.target
+                .value
             )
           }
         />
@@ -429,9 +489,7 @@ export default function PurchasePage() {
         </label>
 
         <input
-          value={
-            invoiceTotal
-          }
+          value={invoiceTotal}
           readOnly
         />
       </div>
@@ -461,81 +519,142 @@ export default function PurchasePage() {
       </h2>
 
       {visiblePurchases.map(
-        (purchase) => (
-          <div
-            key={
-              purchase.id
-            }
-            style={{
-              border:
-                "1px solid #ccc",
-              borderRadius: 8,
-              padding: 12,
-              marginTop: 12,
-            }}
-          >
-            <div>
-              <strong>
-                {
-                  purchase.invoiceNumber
-                }
-              </strong>
-            </div>
+        (purchase) => {
+          const invoiceLots =
+            getLotsForInvoice(
+              purchase.lotIds
+            );
 
-            <div>
-              মোট টাকা:
-              {" "}
-              {
-                purchase.totalAmount
-              }
-            </div>
-
-            <div>
-              সরবরাহকারী:
-              {" "}
-              {purchase.supplierName ||
-                "N/A"}
-            </div>
-
-            <div>
-              Lots:
-              {" "}
-              {
-                purchase.lotIds
-                  .length
-              }
-            </div>
-
+          return (
             <div
+              key={purchase.id}
               style={{
-                display:
-                  "flex",
-                gap: 8,
-                marginTop: 8,
+                border:
+                  "1px solid #ccc",
+                borderRadius: 8,
+                padding: 12,
+                marginTop: 12,
               }}
             >
-              <button
-                onClick={() =>
-                  archivePurchase(
-                    purchase.id
-                  )
-                }
-              >
-                Archive
-              </button>
+              <div>
+                <strong>
+                  {
+                    purchase.invoiceNumber
+                  }
+                </strong>
+              </div>
 
-              <button
-                onClick={() =>
-                  deletePurchase(
-                    purchase.id
-                  )
+              <div>
+                মোট টাকা:
+                {" "}
+                {
+                  purchase.totalAmount
                 }
+              </div>
+
+              <div>
+                সরবরাহকারী:
+                {" "}
+                {purchase.supplierName ||
+                  "N/A"}
+              </div>
+
+              <div>
+                Lots:
+                {" "}
+                {
+                  invoiceLots.length
+                }
+              </div>
+
+              <div
+                style={{
+                  marginTop: 12,
+                  paddingTop: 12,
+                  borderTop:
+                    "1px solid #ddd",
+                }}
               >
-                Delete
-              </button>
+                {invoiceLots.map(
+                  (lot) => (
+                    <div
+                      key={lot.id}
+                      style={{
+                        marginBottom: 12,
+                      }}
+                    >
+                      <div>
+                        <strong>
+                          {
+                            lot.fishName
+                          }
+                        </strong>
+                      </div>
+
+                      <div>
+                        ওজন:
+                        {" "}
+                        {lot.weightKg ??
+                          "-"}
+                      </div>
+
+                      <div>
+                        দর:
+                        {" "}
+                        {lot.ratePerKg ??
+                          "-"}
+                      </div>
+
+                      <div>
+                        মূল্য:
+                        {" "}
+                        {
+                          lot.totalAmount
+                        }
+                      </div>
+
+                      <div>
+                        অবস্থা:
+                        {" "}
+                        {
+                          lot.status
+                        }
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  marginTop: 8,
+                }}
+              >
+                <button
+                  onClick={() =>
+                    archivePurchase(
+                      purchase.id
+                    )
+                  }
+                >
+                  Archive
+                </button>
+
+                <button
+                  onClick={() =>
+                    deletePurchase(
+                      purchase.id
+                    )
+                  }
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-        )
+          );
+        }
       )}
     </div>
   );
