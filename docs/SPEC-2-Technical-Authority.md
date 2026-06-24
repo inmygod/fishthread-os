@@ -250,3 +250,19 @@ Validation Rules:
 - Invoice creation must never require Rate.
 - Invoice creation must never require Supplier.
 - Total Amount is the only mandatory financial field.
+
+
+Inventory Authority
+
+Inventory tracking SHALL operate
+at PurchaseLot level.
+
+PurchaseInvoice is a container.
+
+PurchaseLot is the inventory unit.
+
+SaleInvoice SHALL link
+PurchaseLot records.
+
+Sold status SHALL be managed
+at PurchaseLot level.
