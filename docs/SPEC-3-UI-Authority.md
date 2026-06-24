@@ -386,3 +386,15 @@ Examples:
 Authority
 
 This rule is mandatory across the entire application and may not be overridden by future implementations.
+
+## Mobile Safe Area Authority
+
+FishThread OS is optimized for iPhone 8.
+
+Requirements:
+
+- Bottom Navigation must remain fixed.
+- Page content must never be hidden behind navigation.
+- All screens must provide bottom spacing.
+- Minimum bottom safe area: 80px.
+- All primary workflows must be operable with one hand.
