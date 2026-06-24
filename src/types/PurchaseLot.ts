@@ -1,9 +1,9 @@
 export interface PurchaseLot {
   id: string;
 
-  purchaseInvoiceId: string;
+  purchaseInvoiceId?: string;
 
-  lotNumber: string;
+  lotNumber?: string;
 
   fishName?: string;
 
@@ -11,7 +11,7 @@ export interface PurchaseLot {
 
   ratePerKg?: number;
 
-  totalAmount?: number;
+  totalAmount: number;
 
   status:
     | "available"
