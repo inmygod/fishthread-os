@@ -1,4 +1,12 @@
-export default function DashboardPage() {
+interface DashboardPageProps {
+  onNavigate: (
+    page: string
+  ) => void;
+}
+
+export default function DashboardPage({
+  onNavigate,
+}: DashboardPageProps) {
   return (
     <div
       style={{
@@ -19,6 +27,11 @@ export default function DashboardPage() {
         }}
       >
         <button
+          onClick={() =>
+            onNavigate(
+              "purchase"
+            )
+          }
           style={{
             padding: 20,
             fontSize: 18,
@@ -28,6 +41,11 @@ export default function DashboardPage() {
         </button>
 
         <button
+          onClick={() =>
+            onNavigate(
+              "sale"
+            )
+          }
           style={{
             padding: 20,
             fontSize: 18,
@@ -37,6 +55,11 @@ export default function DashboardPage() {
         </button>
 
         <button
+          onClick={() =>
+            onNavigate(
+              "customers"
+            )
+          }
           style={{
             padding: 20,
             fontSize: 18,
@@ -46,6 +69,11 @@ export default function DashboardPage() {
         </button>
 
         <button
+          onClick={() =>
+            onNavigate(
+              "reports"
+            )
+          }
           style={{
             padding: 20,
             fontSize: 18,
