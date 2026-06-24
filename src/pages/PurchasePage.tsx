@@ -1,14 +1,16 @@
 import { useMemo, useState } from "react";
 
 import { usePurchaseStore } from "../stores/purchaseStore";
-
 import { PurchaseInvoice } from "../types/PurchaseInvoice";
 
 export default function PurchasePage() {
-  const addPurchase =
-    usePurchaseStore(
-      (state) => state.addPurchase
-    );
+  const addPurchase = usePurchaseStore(
+    (state) => state.addPurchase
+  );
+
+  const purchases = usePurchaseStore(
+    (state) => state.purchases
+  );
 
   const [supplierName, setSupplierName] =
     useState("");
@@ -28,10 +30,9 @@ export default function PurchasePage() {
   const [error, setError] =
     useState("");
 
-  const invoiceNumber =
-    useMemo(() => {
-      return `PI-${Date.now()}`;
-    }, []);
+  const invoiceNumber = useMemo(() => {
+    return `PI-${Date.now()}`;
+  }, []);
 
   const calculatedAmount =
     Number(weight || 0) *
@@ -54,9 +55,11 @@ export default function PurchasePage() {
       purchaseDate:
         new Date().toISOString(),
 
-      supplierName,
+      supplierName:
+        supplierName || undefined,
 
-      supplierPhone,
+      supplierPhone:
+        supplierPhone || undefined,
 
       totalWeightKg: weight
         ? Number(weight)
@@ -87,7 +90,7 @@ export default function PurchasePage() {
     setError("");
 
     alert(
-      `চালান সংরক্ষণ করা হয়েছে\n${invoiceNumber}`
+      "চালান সংরক্ষণ করা হয়েছে"
     );
 
     setSupplierName("");
@@ -226,6 +229,39 @@ export default function PurchasePage() {
       >
         চালান সংরক্ষণ
       </button>
+
+      <hr />
+
+      <h3>
+        Saved Purchase Invoices
+      </h3>
+
+      {purchases.map((purchase) => (
+        <div
+          key={purchase.id}
+          style={{
+            border:
+              "1px solid #ccc",
+            padding: 12,
+            marginTop: 8,
+          }}
+        >
+          <div>
+            {purchase.invoiceNumber}
+          </div>
+
+          <div>
+            Amount:{" "}
+            {purchase.totalAmount}
+          </div>
+
+          <div>
+            Supplier:{" "}
+            {purchase.supplierName ||
+              "N/A"}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
