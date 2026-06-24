@@ -19,6 +19,11 @@ export default function SalePage() {
       (state) => state.purchases
     );
 
+  const markAsSold =
+    usePurchaseStore(
+      (state) => state.markAsSold
+    );
+
   const [selectedPurchases, setSelectedPurchases] =
     useState<string[]>([]);
 
@@ -53,7 +58,9 @@ export default function SalePage() {
     purchases.filter(
       (purchase) =>
         !purchase.archived &&
-        !purchase.deleted
+        !purchase.deleted &&
+        purchase.status ===
+          "available"
     );
 
   const togglePurchase = (
@@ -88,8 +95,11 @@ export default function SalePage() {
       return;
     }
 
+    const saleId =
+      crypto.randomUUID();
+
     const sale: SaleInvoice = {
-      id: crypto.randomUUID(),
+      id: saleId,
 
       invoiceNumber,
 
@@ -133,6 +143,15 @@ export default function SalePage() {
 
     addSale(sale);
 
+    if (
+      selectedPurchases.length > 0
+    ) {
+      markAsSold(
+        selectedPurchases,
+        saleId
+      );
+    }
+
     setCustomerName("");
     setCustomerPhone("");
     setWeight("");
@@ -143,7 +162,11 @@ export default function SalePage() {
   };
 
   return (
-    <div style={{ padding: 16 }}>
+    <div
+      style={{
+        padding: 16,
+      }}
+    >
       <h1>নতুন বিক্রয়</h1>
 
       <p>
@@ -151,7 +174,8 @@ export default function SalePage() {
       </p>
 
       <h3>
-        Available Purchase Invoices
+        Available Purchase
+        Invoices
       </h3>
 
       {availablePurchases.map(
@@ -337,10 +361,10 @@ export default function SalePage() {
           </div>
 
           <div>
-            Linked Purchases:
-            {" "}
+            Linked Purchases:{" "}
             {
-              sale.purchaseInvoiceIds
+              sale
+                .purchaseInvoiceIds
                 .length
             }
           </div>
