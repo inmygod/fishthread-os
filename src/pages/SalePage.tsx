@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 
 import { useSaleStore } from "../stores/saleStore";
+import { usePurchaseStore } from "../stores/purchaseStore";
+
 import { SaleInvoice } from "../types/SaleInvoice";
 
 export default function SalePage() {
@@ -11,6 +13,14 @@ export default function SalePage() {
   const sales = useSaleStore(
     (state) => state.sales
   );
+
+  const purchases =
+    usePurchaseStore(
+      (state) => state.purchases
+    );
+
+  const [selectedPurchases, setSelectedPurchases] =
+    useState<string[]>([]);
 
   const [customerName, setCustomerName] =
     useState("");
@@ -39,6 +49,36 @@ export default function SalePage() {
     Number(weight || 0) *
     Number(rate || 0);
 
+  const availablePurchases =
+    purchases.filter(
+      (purchase) =>
+        !purchase.archived &&
+        !purchase.deleted
+    );
+
+  const togglePurchase = (
+    purchaseId: string
+  ) => {
+    if (
+      selectedPurchases.includes(
+        purchaseId
+      )
+    ) {
+      setSelectedPurchases(
+        selectedPurchases.filter(
+          (id) => id !== purchaseId
+        )
+      );
+
+      return;
+    }
+
+    setSelectedPurchases([
+      ...selectedPurchases,
+      purchaseId,
+    ]);
+  };
+
   const handleSave = () => {
     if (!totalAmount.trim()) {
       setError(
@@ -64,7 +104,8 @@ export default function SalePage() {
 
       customerId: undefined,
 
-      purchaseInvoiceIds: [],
+      purchaseInvoiceIds:
+        selectedPurchases,
 
       totalWeightKg: weight
         ? Number(weight)
@@ -92,26 +133,57 @@ export default function SalePage() {
 
     addSale(sale);
 
-    setError("");
-
     setCustomerName("");
     setCustomerPhone("");
     setWeight("");
     setRate("");
     setTotalAmount("");
+    setSelectedPurchases([]);
+    setError("");
   };
 
   return (
-    <div
-      style={{
-        padding: 16,
-      }}
-    >
+    <div style={{ padding: 16 }}>
       <h1>নতুন বিক্রয়</h1>
 
       <p>
         চালান নং: {invoiceNumber}
       </p>
+
+      <h3>
+        Available Purchase Invoices
+      </h3>
+
+      {availablePurchases.map(
+        (purchase) => (
+          <div
+            key={purchase.id}
+          >
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedPurchases.includes(
+                  purchase.id
+                )}
+                onChange={() =>
+                  togglePurchase(
+                    purchase.id
+                  )
+                }
+              />
+
+              {" "}
+              {purchase.invoiceNumber}
+              {" "}
+              (
+              {purchase.totalAmount}
+              )
+            </label>
+          </div>
+        )
+      )}
+
+      <br />
 
       <div>
         <label>
@@ -262,6 +334,15 @@ export default function SalePage() {
             ক্রেতা:{" "}
             {sale.customerName ||
               "N/A"}
+          </div>
+
+          <div>
+            Linked Purchases:
+            {" "}
+            {
+              sale.purchaseInvoiceIds
+                .length
+            }
           </div>
         </div>
       ))}
