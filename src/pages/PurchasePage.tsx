@@ -3,6 +3,13 @@ import { useMemo, useState } from "react";
 import { usePurchaseStore } from "../stores/purchaseStore";
 import { PurchaseInvoice } from "../types/PurchaseInvoice";
 
+type LotForm = {
+  fishName: string;
+  weightKg: string;
+  ratePerKg: string;
+  totalAmount: string;
+};
+
 export default function PurchasePage() {
   const addPurchase = usePurchaseStore(
     (state) => state.addPurchase
@@ -28,14 +35,16 @@ export default function PurchasePage() {
   const [supplierPhone, setSupplierPhone] =
     useState("");
 
-  const [weight, setWeight] =
-    useState("");
-
-  const [rate, setRate] =
-    useState("");
-
-  const [totalAmount, setTotalAmount] =
-    useState("");
+  const [lots, setLots] = useState<
+    LotForm[]
+  >([
+    {
+      fishName: "গলদা",
+      weightKg: "",
+      ratePerKg: "",
+      totalAmount: "",
+    },
+  ]);
 
   const [error, setError] =
     useState("");
@@ -45,14 +54,53 @@ export default function PurchasePage() {
       return `PI-${Date.now()}`;
     }, []);
 
-  const calculatedAmount =
-    Number(weight || 0) *
-    Number(rate || 0);
+  const addLot = () => {
+    setLots([
+      ...lots,
+      {
+        fishName: "গলদা",
+        weightKg: "",
+        ratePerKg: "",
+        totalAmount: "",
+      },
+    ]);
+  };
+
+  const updateLot = (
+    index: number,
+    field: keyof LotForm,
+    value: string
+  ) => {
+    const updatedLots = [...lots];
+
+    updatedLots[index] = {
+      ...updatedLots[index],
+      [field]: value,
+    };
+
+    setLots(updatedLots);
+  };
+
+  const invoiceTotal =
+    lots.reduce(
+      (sum, lot) =>
+        sum +
+        Number(
+          lot.totalAmount || 0
+        ),
+      0
+    );
 
   const handleSave = () => {
-    if (!totalAmount.trim()) {
+    const invalidLot =
+      lots.some(
+        (lot) =>
+          !lot.totalAmount.trim()
+      );
+
+    if (invalidLot) {
       setError(
-        "মোট টাকা অবশ্যই দিতে হবে"
+        "প্রতিটি দাগে মোট মূল্য দিতে হবে"
       );
 
       return;
@@ -72,16 +120,8 @@ export default function PurchasePage() {
       supplierPhone:
         supplierPhone || undefined,
 
-      totalWeightKg: weight
-        ? Number(weight)
-        : undefined,
-
-      ratePerKg: rate
-        ? Number(rate)
-        : undefined,
-
       totalAmount:
-        Number(totalAmount),
+        invoiceTotal,
 
       lotIds: [],
 
@@ -100,17 +140,20 @@ export default function PurchasePage() {
 
     addPurchase(purchase);
 
-    setError("");
-
     setSupplierName("");
 
     setSupplierPhone("");
 
-    setWeight("");
+    setLots([
+      {
+        fishName: "গলদা",
+        weightKg: "",
+        ratePerKg: "",
+        totalAmount: "",
+      },
+    ]);
 
-    setRate("");
-
-    setTotalAmount("");
+    setError("");
   };
 
   const visiblePurchases =
@@ -167,67 +210,154 @@ export default function PurchasePage() {
 
       <br />
 
-      <div>
-        <label>
-          Weight (KG)
-        </label>
+      <h2>দাগসমূহ</h2>
+            {lots.map(
+        (lot, index) => {
+          const calculatedAmount =
+            Number(
+              lot.weightKg || 0
+            ) *
+            Number(
+              lot.ratePerKg || 0
+            );
 
-        <input
-          inputMode="decimal"
-          value={weight}
-          onChange={(e) =>
-            setWeight(
-              e.target.value
-            )
-          }
-        />
-      </div>
+          return (
+            <div
+              key={index}
+              style={{
+                border:
+                  "1px solid #ccc",
+                borderRadius: 8,
+                padding: 12,
+                marginBottom: 12,
+              }}
+            >
+              <h3>
+                দাগ {index + 1}
+              </h3>
 
+              <div>
+                <label>
+                  মাছের নাম
+                </label>
+
+                <input
+                  value={
+                    lot.fishName
+                  }
+                  onChange={(e) =>
+                    updateLot(
+                      index,
+                      "fishName",
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+
+              <br />
+
+              <div>
+                <label>
+                  ওজন (KG)
+                </label>
+
+                <input
+                  inputMode="decimal"
+                  value={
+                    lot.weightKg
+                  }
+                  onChange={(e) =>
+                    updateLot(
+                      index,
+                      "weightKg",
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+
+              <br />
+
+              <div>
+                <label>
+                  দর
+                </label>
+
+                <input
+                  inputMode="decimal"
+                  value={
+                    lot.ratePerKg
+                  }
+                  onChange={(e) =>
+                    updateLot(
+                      index,
+                      "ratePerKg",
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+
+              <br />
+
+              <div>
+                <label>
+                  ক্যালকুলেটেড মূল্য
+                </label>
+
+                <input
+                  value={
+                    calculatedAmount
+                  }
+                  readOnly
+                />
+              </div>
+
+              <br />
+
+              <div>
+                <label>
+                  মোট মূল্য *
+                </label>
+
+                <input
+                  inputMode="decimal"
+                  value={
+                    lot.totalAmount
+                  }
+                  onChange={(e) =>
+                    updateLot(
+                      index,
+                      "totalAmount",
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+            </div>
+          );
+        }
+      )}
+
+      <button
+        type="button"
+        onClick={addLot}
+      >
+        + নতুন দাগ
+      </button>
+
+      <br />
       <br />
 
       <div>
         <label>
-          Rate Per KG
+          চালানের মোট মূল্য
         </label>
 
         <input
-          inputMode="decimal"
-          value={rate}
-          onChange={(e) =>
-            setRate(
-              e.target.value
-            )
-          }
-        />
-      </div>
-            <br />
-
-      <div>
-        <label>
-          Calculated Amount
-        </label>
-
-        <input
-          value={calculatedAmount}
+          value={invoiceTotal}
           readOnly
-        />
-      </div>
-
-      <br />
-
-      <div>
-        <label>
-          Total Amount *
-        </label>
-
-        <input
-          inputMode="decimal"
-          value={totalAmount}
-          onChange={(e) =>
-            setTotalAmount(
-              e.target.value
-            )
-          }
         />
       </div>
 
@@ -276,7 +406,7 @@ export default function PurchasePage() {
             </div>
 
             <div>
-              টাকা:{" "}
+              মোট টাকা:{" "}
               {
                 purchase.totalAmount
               }
