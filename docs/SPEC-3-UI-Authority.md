@@ -398,3 +398,22 @@ Requirements:
 - All screens must provide bottom spacing.
 - Minimum bottom safe area: 80px.
 - All primary workflows must be operable with one hand.
+
+## Dashboard Authority
+
+Dashboard is the default landing screen.
+
+Dashboard must provide:
+
+- New Purchase Shortcut
+- New Sale Shortcut
+- Customer Shortcut
+- Reports Shortcut
+
+Dashboard actions must be reachable with one thumb.
+
+Large touch targets are required.
+
+Minimum touch target height:
+
+48px
