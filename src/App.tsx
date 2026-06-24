@@ -16,22 +16,38 @@ export default function App() {
   const renderPage = () => {
     switch (activePage) {
       case "purchase":
-        return <PurchasePage />;
+        return (
+          <PurchasePage />
+        );
 
       case "sale":
-        return <SalePage />;
+        return (
+          <SalePage />
+        );
 
       case "customers":
-        return <CustomersPage />;
+        return (
+          <CustomersPage />
+        );
 
       case "reports":
-        return <ReportsPage />;
+        return (
+          <ReportsPage />
+        );
 
       case "settings":
-        return <SettingsPage />;
+        return (
+          <SettingsPage />
+        );
 
       default:
-        return <DashboardPage />;
+        return (
+          <DashboardPage
+            onNavigate={
+              setActivePage
+            }
+          />
+        );
     }
   };
 
