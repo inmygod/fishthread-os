@@ -40,9 +40,10 @@ export default function PurchasePage() {
   const [error, setError] =
     useState("");
 
-  const invoiceNumber = useMemo(() => {
-    return `PI-${Date.now()}`;
-  }, []);
+  const invoiceNumber =
+    useMemo(() => {
+      return `PI-${Date.now()}`;
+    }, []);
 
   const calculatedAmount =
     Number(weight || 0) *
@@ -82,6 +83,8 @@ export default function PurchasePage() {
       totalAmount:
         Number(totalAmount),
 
+      lotIds: [],
+
       status: "available",
 
       createdAt:
@@ -100,9 +103,13 @@ export default function PurchasePage() {
     setError("");
 
     setSupplierName("");
+
     setSupplierPhone("");
+
     setWeight("");
+
     setRate("");
+
     setTotalAmount("");
   };
 
@@ -193,8 +200,7 @@ export default function PurchasePage() {
           }
         />
       </div>
-
-      <br />
+            <br />
 
       <div>
         <label>
@@ -280,6 +286,14 @@ export default function PurchasePage() {
               সরবরাহকারী:{" "}
               {purchase.supplierName ||
                 "N/A"}
+            </div>
+
+            <div>
+              Lots:{" "}
+              {
+                purchase.lotIds
+                  .length
+              }
             </div>
 
             <div
