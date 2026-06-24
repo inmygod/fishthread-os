@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 
 import { usePurchaseStore } from "../stores/purchaseStore";
+import { usePurchaseLotStore } from "../stores/purchaseLotStore";
+
 import { PurchaseInvoice } from "../types/PurchaseInvoice";
+import { PurchaseLot } from "../types/PurchaseLot";
 
 type LotForm = {
   fishName: string;
@@ -29,6 +32,11 @@ export default function PurchasePage() {
     (state) => state.purchases
   );
 
+  const addLot =
+    usePurchaseLotStore(
+      (state) => state.addLot
+    );
+
   const [supplierName, setSupplierName] =
     useState("");
 
@@ -54,7 +62,7 @@ export default function PurchasePage() {
       return `PI-${Date.now()}`;
     }, []);
 
-  const addLot = () => {
+  const addLotRow = () => {
     setLots([
       ...lots,
       {
@@ -106,37 +114,93 @@ export default function PurchasePage() {
       return;
     }
 
-    const purchase: PurchaseInvoice = {
-      id: crypto.randomUUID(),
+    const lotIds: string[] = [];
 
-      invoiceNumber,
+    lots.forEach((lot) => {
+      const lotId =
+        crypto.randomUUID();
 
-      purchaseDate:
-        new Date().toISOString(),
+      const purchaseLot: PurchaseLot =
+        {
+          id: lotId,
 
-      supplierName:
-        supplierName || undefined,
+          fishName:
+            lot.fishName ||
+            "গলদা",
 
-      supplierPhone:
-        supplierPhone || undefined,
+          totalAmount:
+            Number(
+              lot.totalAmount
+            ),
+                    totalWeightKg:
+            lot.weightKg
+              ? Number(
+                  lot.weightKg
+                )
+              : undefined,
 
-      totalAmount:
-        invoiceTotal,
+          ratePerKg:
+            lot.ratePerKg
+              ? Number(
+                  lot.ratePerKg
+                )
+              : undefined,
 
-      lotIds: [],
+          status:
+            "available",
 
-      status: "available",
+          createdAt:
+            new Date().toISOString(),
 
-      createdAt:
-        new Date().toISOString(),
+          updatedAt:
+            new Date().toISOString(),
 
-      updatedAt:
-        new Date().toISOString(),
+          archived: false,
 
-      archived: false,
+          deleted: false,
+        };
 
-      deleted: false,
-    };
+      addLot(purchaseLot);
+
+      lotIds.push(lotId);
+    });
+
+    const purchase: PurchaseInvoice =
+      {
+        id:
+          crypto.randomUUID(),
+
+        invoiceNumber,
+
+        purchaseDate:
+          new Date().toISOString(),
+
+        supplierName:
+          supplierName ||
+          undefined,
+
+        supplierPhone:
+          supplierPhone ||
+          undefined,
+
+        totalAmount:
+          invoiceTotal,
+
+        lotIds,
+
+        status:
+          "available",
+
+        createdAt:
+          new Date().toISOString(),
+
+        updatedAt:
+          new Date().toISOString(),
+
+        archived: false,
+
+        deleted: false,
+      };
 
     addPurchase(purchase);
 
@@ -172,16 +236,21 @@ export default function PurchasePage() {
       <h1>নতুন ক্রয়</h1>
 
       <p>
-        চালান নং: {invoiceNumber}
+        চালান নং:
+        {" "}
+        {invoiceNumber}
       </p>
 
       <div>
         <label>
-          Supplier / Vendor Name
+          Supplier /
+          Vendor Name
         </label>
 
         <input
-          value={supplierName}
+          value={
+            supplierName
+          }
           onChange={(e) =>
             setSupplierName(
               e.target.value
@@ -199,7 +268,9 @@ export default function PurchasePage() {
 
         <input
           inputMode="numeric"
-          value={supplierPhone}
+          value={
+            supplierPhone
+          }
           onChange={(e) =>
             setSupplierPhone(
               e.target.value
@@ -210,7 +281,9 @@ export default function PurchasePage() {
 
       <br />
 
-      <h2>দাগসমূহ</h2>
+      <h2>
+        দাগসমূহ
+      </h2>
             {lots.map(
         (lot, index) => {
           const calculatedAmount =
@@ -342,7 +415,7 @@ export default function PurchasePage() {
 
       <button
         type="button"
-        onClick={addLot}
+        onClick={addLotRow}
       >
         + নতুন দাগ
       </button>
@@ -356,7 +429,9 @@ export default function PurchasePage() {
         </label>
 
         <input
-          value={invoiceTotal}
+          value={
+            invoiceTotal
+          }
           readOnly
         />
       </div>
@@ -388,7 +463,9 @@ export default function PurchasePage() {
       {visiblePurchases.map(
         (purchase) => (
           <div
-            key={purchase.id}
+            key={
+              purchase.id
+            }
             style={{
               border:
                 "1px solid #ccc",
@@ -406,20 +483,23 @@ export default function PurchasePage() {
             </div>
 
             <div>
-              মোট টাকা:{" "}
+              মোট টাকা:
+              {" "}
               {
                 purchase.totalAmount
               }
             </div>
 
             <div>
-              সরবরাহকারী:{" "}
+              সরবরাহকারী:
+              {" "}
               {purchase.supplierName ||
                 "N/A"}
             </div>
 
             <div>
-              Lots:{" "}
+              Lots:
+              {" "}
               {
                 purchase.lotIds
                   .length
@@ -428,7 +508,8 @@ export default function PurchasePage() {
 
             <div
               style={{
-                display: "flex",
+                display:
+                  "flex",
                 gap: 8,
                 marginTop: 8,
               }}
