@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { useSaleStore } from "../stores/saleStore";
 import { usePurchaseStore } from "../stores/purchaseStore";
+import { usePurchaseLotStore } from "../stores/purchaseLotStore";
 
 import { SaleInvoice } from "../types/SaleInvoice";
 
@@ -19,27 +20,24 @@ export default function SalePage() {
       (state) => state.purchases
     );
 
-  const markAsSold =
-    usePurchaseStore(
-      (state) => state.markAsSold
+  const lots =
+    usePurchaseLotStore(
+      (state) => state.lots
     );
 
-  const [selectedPurchases, setSelectedPurchases] =
+  const markLotAsSold =
+    usePurchaseLotStore(
+      (state) =>
+        state.markLotAsSold
+    );
+
+  const [selectedLotIds, setSelectedLotIds] =
     useState<string[]>([]);
 
   const [customerName, setCustomerName] =
     useState("");
 
   const [customerPhone, setCustomerPhone] =
-    useState("");
-
-  const [weight, setWeight] =
-    useState("");
-
-  const [rate, setRate] =
-    useState("");
-
-  const [totalAmount, setTotalAmount] =
     useState("");
 
   const [error, setError] =
@@ -50,46 +48,60 @@ export default function SalePage() {
       return `SI-${Date.now()}`;
     }, []);
 
-  const calculatedAmount =
-    Number(weight || 0) *
-    Number(rate || 0);
-
-  const availablePurchases =
-    purchases.filter(
-      (purchase) =>
-        !purchase.archived &&
-        !purchase.deleted &&
-        purchase.status ===
+  const availableLots =
+    lots.filter(
+      (lot) =>
+        !lot.archived &&
+        !lot.deleted &&
+        lot.status ===
           "available"
     );
 
-  const togglePurchase = (
-    purchaseId: string
+  const toggleLot = (
+    lotId: string
   ) => {
     if (
-      selectedPurchases.includes(
-        purchaseId
+      selectedLotIds.includes(
+        lotId
       )
     ) {
-      setSelectedPurchases(
-        selectedPurchases.filter(
-          (id) => id !== purchaseId
+      setSelectedLotIds(
+        selectedLotIds.filter(
+          (id) => id !== lotId
         )
       );
 
       return;
     }
 
-    setSelectedPurchases([
-      ...selectedPurchases,
-      purchaseId,
+    setSelectedLotIds([
+      ...selectedLotIds,
+      lotId,
     ]);
   };
 
+  const selectedLots =
+    availableLots.filter(
+      (lot) =>
+        selectedLotIds.includes(
+          lot.id
+        )
+    );
+
+  const saleTotal =
+    selectedLots.reduce(
+      (sum, lot) =>
+        sum +
+        lot.totalAmount,
+      0
+    );
+
   const handleSave = () => {
-    if (!totalAmount.trim()) {
+    if (
+      selectedLotIds.length === 0
+    ) {
       setError(
-        "মোট টাকা অবশ্যই দিতে হবে"
+        "অন্তত একটি দাগ নির্বাচন করতে হবে"
       );
 
       return;
@@ -97,6 +109,19 @@ export default function SalePage() {
 
     const saleId =
       crypto.randomUUID();
+        const selectedPurchaseInvoiceIds =
+      Array.from(
+        new Set(
+          selectedLots
+            .map(
+              (lot) =>
+                lot.purchaseInvoiceId
+            )
+            .filter(
+              Boolean
+            )
+        )
+      ) as string[];
 
     const sale: SaleInvoice = {
       id: saleId,
@@ -106,29 +131,28 @@ export default function SalePage() {
       saleDate:
         new Date().toISOString(),
 
+      customerId:
+        undefined,
+
       customerName:
-        customerName || undefined,
+        customerName ||
+        undefined,
 
       customerPhone:
-        customerPhone || undefined,
-
-      customerId: undefined,
+        customerPhone ||
+        undefined,
 
       purchaseInvoiceIds:
-        selectedPurchases,
+        selectedPurchaseInvoiceIds,
 
-      totalWeightKg: weight
-        ? Number(weight)
-        : undefined,
-
-      ratePerKg: rate
-        ? Number(rate)
-        : undefined,
+      purchaseLotIds:
+        selectedLotIds,
 
       totalAmount:
-        Number(totalAmount),
+        saleTotal,
 
-      notes: undefined,
+      notes:
+        undefined,
 
       createdAt:
         new Date().toISOString(),
@@ -136,28 +160,26 @@ export default function SalePage() {
       updatedAt:
         new Date().toISOString(),
 
-      archived: false,
+      archived:
+        false,
 
-      deleted: false,
+      deleted:
+        false,
     };
 
     addSale(sale);
 
-    if (
-      selectedPurchases.length > 0
-    ) {
-      markAsSold(
-        selectedPurchases,
-        saleId
-      );
-    }
+    markLotAsSold(
+      selectedLotIds,
+      saleId
+    );
 
     setCustomerName("");
+
     setCustomerPhone("");
-    setWeight("");
-    setRate("");
-    setTotalAmount("");
-    setSelectedPurchases([]);
+
+    setSelectedLotIds([]);
+
     setError("");
   };
 
@@ -167,47 +189,17 @@ export default function SalePage() {
         padding: 16,
       }}
     >
-      <h1>নতুন বিক্রয়</h1>
+      <h1>
+        নতুন বিক্রয়
+      </h1>
 
       <p>
-        চালান নং: {invoiceNumber}
+        চালান নং:
+        {" "}
+        {
+          invoiceNumber
+        }
       </p>
-
-      <h3>
-        Available Purchase
-        Invoices
-      </h3>
-
-      {availablePurchases.map(
-        (purchase) => (
-          <div
-            key={purchase.id}
-          >
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedPurchases.includes(
-                  purchase.id
-                )}
-                onChange={() =>
-                  togglePurchase(
-                    purchase.id
-                  )
-                }
-              />
-
-              {" "}
-              {purchase.invoiceNumber}
-              {" "}
-              (
-              {purchase.totalAmount}
-              )
-            </label>
-          </div>
-        )
-      )}
-
-      <br />
 
       <div>
         <label>
@@ -215,7 +207,9 @@ export default function SalePage() {
         </label>
 
         <input
-          value={customerName}
+          value={
+            customerName
+          }
           onChange={(e) =>
             setCustomerName(
               e.target.value
@@ -233,7 +227,9 @@ export default function SalePage() {
 
         <input
           inputMode="numeric"
-          value={customerPhone}
+          value={
+            customerPhone
+          }
           onChange={(e) =>
             setCustomerPhone(
               e.target.value
@@ -244,68 +240,77 @@ export default function SalePage() {
 
       <br />
 
-      <div>
-        <label>
-          Weight (KG)
-        </label>
+      <h3>
+        Available Lots
+      </h3>
+            {availableLots.map(
+        (lot) => (
+          <div
+            key={lot.id}
+            style={{
+              border:
+                "1px solid #ccc",
+              borderRadius: 8,
+              padding: 12,
+              marginBottom: 8,
+            }}
+          >
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedLotIds.includes(
+                  lot.id
+                )}
+                onChange={() =>
+                  toggleLot(
+                    lot.id
+                  )
+                }
+              />
 
-        <input
-          inputMode="decimal"
-          value={weight}
-          onChange={(e) =>
-            setWeight(
-              e.target.value
-            )
-          }
-        />
-      </div>
+              {" "}
+
+              <strong>
+                {lot.fishName ||
+                  "গলদা"}
+              </strong>
+
+              {" "}|
+
+              {" "}ওজন:
+              {" "}
+              {lot.weightKg ??
+                "-"}
+
+              {" "}|
+
+              {" "}দর:
+              {" "}
+              {lot.ratePerKg ??
+                "-"}
+
+              {" "}|
+
+              {" "}মূল্য:
+              {" "}
+              {
+                lot.totalAmount
+              }
+            </label>
+          </div>
+        )
+      )}
 
       <br />
 
       <div>
         <label>
-          Rate Per KG
+          বিক্রয় মোট মূল্য
         </label>
 
         <input
-          inputMode="decimal"
-          value={rate}
-          onChange={(e) =>
-            setRate(
-              e.target.value
-            )
-          }
-        />
-      </div>
-
-      <br />
-
-      <div>
-        <label>
-          Calculated Amount
-        </label>
-
-        <input
-          value={calculatedAmount}
+          value={saleTotal}
           readOnly
-        />
-      </div>
-
-      <br />
-
-      <div>
-        <label>
-          Total Amount *
-        </label>
-
-        <input
-          inputMode="decimal"
-          value={totalAmount}
-          onChange={(e) =>
-            setTotalAmount(
-              e.target.value
-            )
-          }
         />
       </div>
 
@@ -333,43 +338,63 @@ export default function SalePage() {
         বিক্রয় চালানসমূহ
       </h2>
 
-      {sales.map((sale) => (
-        <div
-          key={sale.id}
-          style={{
-            border:
-              "1px solid #ccc",
-            borderRadius: 8,
-            padding: 12,
-            marginTop: 12,
-          }}
-        >
-          <div>
-            <strong>
-              {sale.invoiceNumber}
-            </strong>
-          </div>
+      {sales.map(
+        (sale) => (
+          <div
+            key={sale.id}
+            style={{
+              border:
+                "1px solid #ccc",
+              borderRadius: 8,
+              padding: 12,
+              marginTop: 12,
+            }}
+          >
+            <div>
+              <strong>
+                {
+                  sale.invoiceNumber
+                }
+              </strong>
+            </div>
 
-          <div>
-            টাকা: {sale.totalAmount}
-          </div>
+            <div>
+              মোট টাকা:
+              {" "}
+              {
+                sale.totalAmount
+              }
+            </div>
 
-          <div>
-            ক্রেতা:{" "}
-            {sale.customerName ||
-              "N/A"}
-          </div>
+            <div>
+              ক্রেতা:
+              {" "}
+              {sale.customerName ||
+                "N/A"}
+            </div>
 
-          <div>
-            Linked Purchases:{" "}
-            {
-              sale
-                .purchaseInvoiceIds
-                .length
-            }
+            <div>
+              Lots:
+              {" "}
+              {
+                sale
+                  .purchaseLotIds
+                  .length
+              }
+            </div>
+
+            <div>
+              Linked Purchases:
+              {" "}
+              {
+                sale
+                  .purchaseInvoiceIds
+                  .length
+              }
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      )}
     </div>
   );
 }
