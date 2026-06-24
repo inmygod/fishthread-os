@@ -36,7 +36,12 @@ export default function App() {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        minHeight: "100vh",
+        paddingBottom: "80px",
+      }}
+    >
       {renderPage()}
 
       <BottomNavigation
