@@ -20,11 +20,6 @@ interface PurchaseStore {
   deletePurchase: (
     id: string
   ) => void;
-
-  markAsSold: (
-    purchaseIds: string[],
-    saleInvoiceId: string
-  ) => void;
 }
 
 export const usePurchaseStore =
@@ -45,60 +40,48 @@ export const usePurchaseStore =
     ) =>
       set((state) => ({
         purchases:
-          state.purchases.map((purchase) =>
-            purchase.id === id
-              ? {
-                  ...purchase,
-                  ...updatedPurchase,
-                }
-              : purchase
+          state.purchases.map(
+            (purchase) =>
+              purchase.id === id
+                ? {
+                    ...purchase,
+                    ...updatedPurchase,
+                    updatedAt:
+                      new Date().toISOString(),
+                  }
+                : purchase
           ),
       })),
 
     archivePurchase: (id) =>
       set((state) => ({
         purchases:
-          state.purchases.map((purchase) =>
-            purchase.id === id
-              ? {
-                  ...purchase,
-                  archived: true,
-                }
-              : purchase
+          state.purchases.map(
+            (purchase) =>
+              purchase.id === id
+                ? {
+                    ...purchase,
+                    archived: true,
+                    updatedAt:
+                      new Date().toISOString(),
+                  }
+                : purchase
           ),
       })),
 
     deletePurchase: (id) =>
       set((state) => ({
         purchases:
-          state.purchases.map((purchase) =>
-            purchase.id === id
-              ? {
-                  ...purchase,
-                  deleted: true,
-                }
-              : purchase
-          ),
-      })),
-
-    markAsSold: (
-      purchaseIds,
-      saleInvoiceId
-    ) =>
-      set((state) => ({
-        purchases:
-          state.purchases.map((purchase) =>
-            purchaseIds.includes(
-              purchase.id
-            )
-              ? {
-                  ...purchase,
-                  status: "sold",
-                  soldAt:
-                    new Date().toISOString(),
-                  saleInvoiceId,
-                }
-              : purchase
+          state.purchases.map(
+            (purchase) =>
+              purchase.id === id
+                ? {
+                    ...purchase,
+                    deleted: true,
+                    updatedAt:
+                      new Date().toISOString(),
+                  }
+                : purchase
           ),
       })),
   }));
